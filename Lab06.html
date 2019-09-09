@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Laboratorio06</title>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <link rel="stylesheet" href="EstilosLab06.css" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      class Carta extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            side: "front"
+          };
+        }
+
+        handle() {
+          if (this.state.side == "front") {
+            this.setState({
+              side: "back"
+            });
+          } else if (this.state.side == "back") {
+            this.setState({
+              side: "front"
+            });
+          }
+        }
+
+        render() {
+          const EstiloIntentos = {
+            fontSize: "20px",
+            padding: "10px",
+            color: "rgb( 96, 104, 41 )",
+            font: "bold"
+          };
+
+          const CardFaceFront = {
+            width: "40px",
+            height: "40px",
+            position: "absolute",
+            borderRadius: "5%",
+            border: "1px solid #333",
+            color: "white",
+            width: "100px",
+            height: "150px",
+            lineHeight: "200px",
+            textAlign: "200px",
+            boxShadow: "4px 4px 10px #555",
+
+            backgroundColor: "white",
+            backgroundImage: "url(question-mark.png)",
+            backgroundRepeat: "no-repeat",
+            transform: "rotateY(0deg)",
+            transition: "all .4s ease-in-out",
+            backfaceVisibility: "visible",
+            zIndex: "10"
+          };
+
+          const CardFaceBack = {
+            width: "40px",
+            height: "40px",
+            position: "absolute",
+            borderRadius: "5%",
+            border: "1px solid #333",
+            color: "white",
+            width: "100px",
+            height: "150px",
+            lineHeight: "200px",
+            textAlign: "200px",
+            boxShadow: "4px 4px 10px #555",
+
+            transform: "rotateY(180deg)",
+            transformStyle: "preserve-3d",
+            transition: "all .4s ease-in-out",
+            backfaceVisibility: "visible",
+            zIndex: "900"
+          };
+
+          const EstiloCarta = {
+            position: "relative",
+            background: "transparent",
+            color: "#000",
+            alignContent: "center",
+            backgroundSize: "cover",
+            margin: "7px",
+            width: "120px",
+            height: "150px",
+            opacity: "0.9"
+          };
+
+          const EstiloImagen = {
+            width: "100%",
+            height: "100%",
+            position: "relative",
+            borderRadius: "10px",
+            cursor: "pointer"
+          };
+
+          return (
+            <div style={EstiloCarta} onClick={this.props.SeleccionarCarta}>
+              <div onClick={this.handle.bind(this)}>
+                {this.props.ComparacionActual == true ||
+                this.props.Acierto == true ? (
+                  <div style={CardFaceBack}>
+                    <img
+                      style={EstiloImagen}
+                      src={`Imagenes/${this.props.image}`}
+                    />
+                  </div>
+                ) : this.state.side == "back" ? ( //if card front
+                  <div style={CardFaceFront}></div>
+                ) : (
+                  <div style={CardFaceFront}></div>
+                )}
+              </div>
+            </div>
+          );
+        }
+      }
+
+      //Clase del Encabezado
+      class Encabezado extends React.Component {
+        constructor(props) {
+          super(props);
+        }
+
+        render() {
+          //EStilo Encabezado
+          const EstiloEncabezado = {
+            fontSize: "60px",
+            padding: "10px",
+            position: "relative",
+            textAlign: "center",
+            color: "white",
+            font: "bold"
+          };
+          //EStilo del botón
+          const EstiloBoton = {
+            fontSize: "20px",
+            padding: "10px",
+            position: "relative",
+            textAlign: "center",
+            color: "gray",
+            font: "bold",
+            marginLeft: "45%"
+          };
+          //Estilo de intentos
+          const EstiloIntentos = {
+            fontSize: "60px",
+            padding: "10px",
+            position: "relative",
+            textAlign: "center",
+            color: "white",
+            font: "bold"
+          };
+          //Return del render del Encabezado
+          return (
+            <header>
+              <div style={EstiloEncabezado}>Memoria Griegas</div>
+              <div style={EstiloIntentos}>Intentos: {this.props.intentos}</div>
+              <div>
+                <button style={EstiloBoton} onClick={this.props.ReiniciarJuego}>
+                  Reiniciar Juego
+                </button>
+              </div>
+            </header>
+          );
+        }
+      }
+      // Modified Shuffle by Chris Coyier
+      // https://css-tricks.com/snippets/javascript/shuffle-array/
+      function shuffle(o) {
+        for (
+          var j, x, i = o.length;
+          i;
+          j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x
+        );
+        return o;
+      }
+
+      //Funcion Random extraída de:
+      //https://codepen.io/bitmapshades/pen/raOZMa
+      function ShuffleDeckGeneral() {
+        const images = [
+          "Hefesto.jpg",
+          "Hera.jpg",
+          "Hermes.jpg",
+          "Zeus.jpg",
+          "ares.jpg",
+          "Dionisio.jpg",
+          "Apollo.jpg",
+          "Hades.jpg",
+          "Artemisa.jpg"
+        ];
+        let cards = [];
+        while (cards.length < 18) {
+          const index = Math.floor(Math.random() * images.length);
+          const card = {
+            image: images.splice(index, 1)[0],
+            Acierto: false
+          };
+          cards.push(card);
+          //Referencia a otro objeto
+          cards.push({ ...card });
+        }
+        return shuffle(cards);
+      }
+
+      class TableroCartas extends React.Component {
+        render() {
+          return (
+            <div className="PrimeraFila">
+              <div className="ContenedorGrid">
+                {//La carta que se asigna en la función es la que se tiene del grid del shouflle
+                this.props.DeckCartasGeneral.map((card, index) => {
+                  const ComparacionActual =
+                    this.props.TwoSelected.indexOf(card) > -1;
+                  return (
+                    <Carta
+                      ComparacionActual={ComparacionActual}
+                      SeleccionarCarta={() => this.props.SeleccionarCarta(card)}
+                      Acierto={card.Acierto}
+                      image={card.image}
+                      key={index}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+      }
+      //Extraido de: https://www.youtube.com/watch?v=oeFOxuudNO8
+      const EstadoInicial = () => {
+        const DeckCartasGeneral = ShuffleDeckGeneral();
+        return {
+          DeckCartasGeneral,
+          TwoSelected: [],
+          Comparacion: false,
+          intentos: 0
+        };
+      };
+
+      class Game extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = EstadoInicial();
+        }
+
+        ReiniciarJuego() {
+          this.setState(EstadoInicial());
+        }
+
+        CompareTwoCards(TwoSelected) {
+          this.setState({ Comparacion: true });
+          //Corutina para los tiempos
+          setTimeout(() => {
+            let DeckCartasGeneral = this.state.DeckCartasGeneral;
+            const [Carta1, Carta2] = TwoSelected;
+            
+            if (Carta1.image === Carta2.image) {
+              //Si ambas cartas tienen la misma imagen
+              DeckCartasGeneral = DeckCartasGeneral.map(card => {
+                if (card.image !== Carta1.image) {
+                  //se retorna la carta
+                  return card;
+                }
+                return { ...card, Acierto: true };
+              });
+            }
+            this.setState({
+              DeckCartasGeneral,
+              intentos: this.state.intentos + 1,
+              TwoSelected: [],
+              Comparacion: false
+            });
+          }, 500);
+        }
+
+        //Métodos y funciones basadas en el siguiente tutorial: https://www.youtube.com/watch?v=oeFOxuudNO8
+        SeleccionarCarta(card) {
+          if (
+            this.state.Comparacion ||
+            this.state.TwoSelected.indexOf(card) > -1 ||
+            card.Acierto
+          ) {
+            return;
+          }
+          const TwoSelected = [...this.state.TwoSelected, card];
+          this.setState({
+            TwoSelected
+          });
+
+          if (TwoSelected.length === 2) {
+            this.CompareTwoCards(TwoSelected);
+          }
+        }
+
+        render() {
+          return (
+            <div className="EstiloJuego">
+              <div>
+                <Encabezado
+                  intentos={this.state.intentos}
+                  ReiniciarJuego={() => this.ReiniciarJuego()}
+                />
+              </div>
+              <div>
+                <TableroCartas
+                  DeckCartasGeneral={this.state.DeckCartasGeneral}
+                  TwoSelected={this.state.TwoSelected}
+                  SeleccionarCarta={card => this.SeleccionarCarta(card)}
+                />
+              </div>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<Game />, document.getElementById("root"));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+.EstiloJuego {
+    margin: 0;
+    padding: 0;
+    background-image: url("FondoGriego.jpg");
+    border-radius: 5%;
+    background-size: cover;
+}
+
+.PrimeraFila {
+    padding-left: 20%;
+    padding-top: 1%;
+    align-content: center;
+    padding-right: 20%;
+}
+
+.ContenedorGrid {
+    padding: 25px;
+    grid-gap: 20px;
+    justify-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+   
+}
